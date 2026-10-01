@@ -2,86 +2,375 @@
    DactyloDys — FEUILLE DE STYLE (CSS)
    Ce fichier contrôle l'APPARENCE de la page :
    couleurs, polices, espacements, animations...
+   Style : sobre et moderne, une seule couleur d'accent, aucun dégradé.
    ============================================================ */
+
+/* Palette : peu de couleurs, contrastes élevés */
+:root {
+    --fond-page: #f4f5f9;      /* gris très clair, doux pour les yeux */
+    --surface: #ffffff;        /* cartes */
+    --surface-2: #eef0f5;      /* boutons secondaires, barres */
+    --ligne: #e1e4ec;          /* séparateurs discrets */
+    --texte: #1d2133;          /* texte principal (contraste ~15:1) */
+    --texte-doux: #545a6e;     /* texte secondaire (contraste > 6:1) */
+    --accent: #4f46e5;         /* LA couleur de l'app : indigo */
+    --accent-fonce: #4338ca;
+    --accent-doux: #eceafe;
+    --erreur: #b42318;
+    --erreur-doux: #fdecea;
+    --succes: #15803d;
+    --succes-doux: #e7f6ec;
+    --focus: #f59e0b;          /* contour clavier bien visible */
+    --rayon: 24px;
+    --ombre: 0 1px 2px rgba(29, 33, 51, 0.04), 0 8px 24px rgba(29, 33, 51, 0.06);
+}
 
 /* Styles de base */
 body {
-    font-family: 'Papyrus', fantasy !important;
-    background: linear-gradient(135deg, #39ff14 0%, #ff00cc 50%, #ffff00 100%) fixed !important;
-    color: #b8b8b8 !important;
-    font-size: 11px;
-    font-style: italic;
-    text-align: justify;
-    line-height: 1 !important;
-    letter-spacing: -0.04em;
-    min-width: 1400px;
+    font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--fond-page);
+    color: var(--texte);
+    font-size: 16px;
+    line-height: 1.6;
+}
+h1, h2 {
+    color: var(--texte);
+    letter-spacing: -0.01em;
+}
+.texte-doux {
+    color: var(--texte-doux);
 }
 
-/* Barre du haut */
-.sticky {
-    background: #ff1a1a !important;
-    border-bottom: 6px dashed #0000ff !important;
+/* ---------- En-tête ---------- */
+.app-header {
+    background: var(--surface);
+    box-shadow: 0 1px 0 var(--ligne);
+}
+.logo-bulle {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-6deg);          /* petite touche ludique */
+    transition: transform 0.3s ease;
+}
+.logo-bulle:hover {
+    transform: rotate(6deg) scale(1.05);
+}
+.logo-nom {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+.logo-nom span {
+    color: var(--accent);
 }
 
-/* Nom de l'application */
-.tracking-tight {
-    font-family: Impact, 'Arial Black', sans-serif !important;
-    color: #ffff00 !important;
-    font-size: 30px !important;
-    animation: clignote 0.6s steps(2) infinite;
+/* ---------- Cartes ---------- */
+.card {
+    background: var(--surface);
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
 }
-@keyframes clignote {
-    50% { opacity: 0.15; }
+.card-titre {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
 }
-
-/* Panneaux */
-section {
-    transform: rotate(-1.2deg);
-    border: 5px dotted #00ffff !important;
-    margin: 37px 3px 11px 58px;
+.card-titre h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
 }
-section:last-of-type {
-    transform: rotate(1.6deg);
-    margin-top: 5px;
-}
-
-/* Textes */
-.text-slate-500, .text-slate-600, .text-slate-700, .text-slate-800, .text-slate-900, .text-slate-400 {
-    color: #c9c9c9 !important;
-}
-.text-xs, .text-\[10px\] {
-    font-size: 9px !important;
+.icone-bulle {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--accent-doux);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Boutons principaux */
-.bg-blue-600 {
-    background: #ffff66 !important;
-    color: #ffffff !important;
+/* ---------- Boutons ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--texte);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.btn:hover {
+    background: var(--ligne);
+}
+.btn:active {
+    transform: scale(0.97);
+}
+.btn-rond {
+    width: 44px;
+    padding: 0;
+    font-weight: 800;
+}
+.btn-principal {
+    min-height: 52px;
+    padding: 0 28px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+.btn-principal:hover {
+    background: var(--accent-fonce);
+    transform: translateY(-2px);
+}
+.btn-discret {
+    background: transparent;
+    color: var(--texte-doux);
+}
+.btn-discret:hover {
+    background: var(--surface-2);
+    color: var(--texte);
+}
+.btn-danger:hover {
+    background: var(--erreur-doux);
+    color: var(--erreur);
 }
 
-/* Zone d'écriture et zone de correction */
+/* Petite étiquette « 14 pt » */
+.pastille {
+    min-width: 56px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* ---------- Choix à bascule (police, espacement) ---------- */
+.bascule {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--surface-2);
+}
+.bascule button {
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--texte-doux);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+.bascule button:hover {
+    color: var(--texte);
+}
+.bascule button[aria-pressed="true"] {
+    background: var(--surface);
+    color: var(--accent);
+    box-shadow: 0 1px 3px rgba(29, 33, 51, 0.12);
+}
+
+/* ---------- Ronds de couleur de fond ---------- */
+.pastille-couleur {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 2px solid #c5cad6;
+    transition: transform 0.15s ease;
+}
+.pastille-couleur:hover {
+    transform: scale(1.1);
+}
+.pastille-couleur[aria-pressed="true"] {
+    box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--accent);
+}
+
+/* ---------- Onglets façon « étapes » ---------- */
+.onglets {
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+    border-radius: 999px;
+    background: var(--surface-2);
+}
+.onglet {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    color: var(--texte-doux);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.onglet:hover {
+    color: var(--texte);
+}
+.onglet[aria-pressed="true"] {
+    background: var(--surface);
+    color: var(--texte);
+    box-shadow: 0 1px 3px rgba(29, 33, 51, 0.12);
+}
+.onglet-numero {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    background: var(--ligne);
+    color: var(--texte-doux);
+}
+.onglet[aria-pressed="true"] .onglet-numero {
+    background: var(--accent);
+    color: #fff;
+}
+.badge-erreurs {
+    min-width: 26px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--erreur);
+    color: #fff;
+    font-size: 0.85rem;
+}
+
+/* ---------- Zone d'écriture et zone de correction ----------
+   Pas de !important ici : les boutons Taille, Format Dys et
+   Espacement doivent pouvoir modifier le texte. */
 #userTextArea, #interactiveViewer {
-    font-family: 'Papyrus', fantasy !important;
-    font-size: 9pt !important;
-    line-height: 1 !important;
-    letter-spacing: -0.05em !important;
-    color: #9a9a9a !important;
+    font-family: 'Verdana', Geneva, Tahoma, sans-serif;
+    color: var(--texte);
+    text-align: left;
+    background-color: var(--surface);
+    border: 2px solid var(--ligne);
+    border-radius: 18px;
+    transition: border-color 0.15s ease;
+}
+#userTextArea:focus {
+    border-color: var(--accent);
+    outline: none;
 }
 ::placeholder {
-    color: #f4f4f4 !important;
+    color: #7a8094;
+    opacity: 1;
 }
 
-/* Mots à corriger */
+/* Mots à corriger : couleur + vague épaisse + fond léger.
+   On ne compte pas seulement sur le rouge (élèves daltoniens). */
 .error-word {
-    color: #ff0000;
+    color: var(--erreur);
+    text-decoration: underline wavy var(--erreur);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    background: var(--erreur-doux);
+    border-radius: 6px;
+    padding: 0 3px;
     cursor: pointer;
-    display: inline-block;
+}
+.error-word:hover, .error-word.is-selected {
+    background: #f9d3ce;
 }
 
-/* Effet focus */
-*:focus, *:focus-visible, .focus-ring:focus {
-    outline: none !important;
-    box-shadow: none !important;
+/* ---------- Boîte à outils de correction ---------- */
+.encart {
+    border-radius: 16px;
+    padding: 14px 16px;
+}
+.encart-erreur {
+    background: var(--erreur-doux);
+}
+.encart-erreur .mot {
+    color: var(--erreur);
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+.encart-astuce {
+    background: var(--accent-doux);
+    color: #2e2a8a;
+}
+.suggestion {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 0 16px;
+    border-radius: 14px;
+    border: 2px solid var(--ligne);
+    background: var(--surface);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--texte);
+    text-align: left;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.suggestion:hover {
+    border-color: var(--accent);
+    transform: translateX(3px);
+}
+.suggestion-numero {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--texte-doux);
+}
+
+/* Zone d'attente (aucun mot choisi, pas encore d'image) */
+.zone-vide {
+    background: var(--fond-page);
+    border-radius: 18px;
+    color: var(--texte-doux);
+}
+.succes-bulle {
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    background: var(--succes-doux);
+    color: var(--succes);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Petit sablier qui tourne pendant l'attente */
+.chargement {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 4px solid var(--accent-doux);
+    border-top-color: var(--accent);
+    animation: tourne 0.9s linear infinite;
+}
+@keyframes tourne {
+    to { transform: rotate(360deg); }
+}
+
+/* ---------- Pied de page ---------- */
+.app-footer {
+    color: var(--texte-doux);
+    font-size: 0.875rem;
+}
+
+/* ---------- Accessibilité ---------- */
+/* On voit toujours où l'on est au clavier */
+*:focus-visible {
+    outline: 3px solid var(--focus) !important;
+    outline-offset: 2px;
 }
 
 /* Animation douce */
@@ -91,4 +380,12 @@ section:last-of-type {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* Respecter le réglage « réduire les animations » de l'ordinateur */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
 }

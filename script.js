@@ -129,18 +129,20 @@ function setFont(style) {
         viewer.style.fontFamily = "'Comic Sans MS', cursive, sans-serif";
         textarea.style.letterSpacing = "0.08em";
         viewer.style.letterSpacing = "0.08em";
-        
-        btnDys.className = "px-3 py-1.5 rounded-md font-semibold bg-white text-blue-600 shadow-sm transition-all";
-        btnVerdana.className = "px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all";
+        textarea.style.wordSpacing = "0.2em";
+        viewer.style.wordSpacing = "0.2em";
     } else {
         textarea.style.fontFamily = "'Verdana', Geneva, Tahoma, sans-serif";
         viewer.style.fontFamily = "'Verdana', Geneva, Tahoma, sans-serif";
         textarea.style.letterSpacing = "normal";
         viewer.style.letterSpacing = "normal";
-
-        btnVerdana.className = "px-3 py-1.5 rounded-md font-semibold bg-white text-blue-600 shadow-sm transition-all";
-        btnDys.className = "px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all";
+        textarea.style.wordSpacing = "normal";
+        viewer.style.wordSpacing = "normal";
     }
+
+    // Le bouton actif est mis en valeur par le CSS (aria-pressed="true")
+    btnDys.setAttribute('aria-pressed', style === 'dys');
+    btnVerdana.setAttribute('aria-pressed', style !== 'dys');
 }
 
 // Gestion de la taille de police
@@ -164,16 +166,12 @@ function setSpacing(type) {
     if (type === 'large') {
         textarea.style.lineHeight = "2.2";
         viewer.style.lineHeight = "2.2";
-        
-        btnLarge.className = "p-1 px-2.5 rounded text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200";
-        btnNormal.className = "p-1 px-2.5 rounded text-xs font-semibold hover:bg-slate-200 text-slate-700";
     } else {
         textarea.style.lineHeight = "1.6";
         viewer.style.lineHeight = "1.6";
-
-        btnNormal.className = "p-1 px-2.5 rounded text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200";
-        btnLarge.className = "p-1 px-2.5 rounded text-xs font-semibold hover:bg-slate-200 text-slate-700";
     }
+    btnLarge.setAttribute('aria-pressed', type === 'large');
+    btnNormal.setAttribute('aria-pressed', type !== 'large');
 }
 
 // Changement de couleur d'arrière-plan pour un meilleur confort de lecture
@@ -185,12 +183,17 @@ function setBg(color) {
         textarea.style.backgroundColor = '#fcf8f2';
         viewer.style.backgroundColor = '#fcf8f2';
     } else if (color === 'pastel') {
-        textarea.style.backgroundColor = '#f0f4f8';
-        viewer.style.backgroundColor = '#f0f4f8';
+        textarea.style.backgroundColor = '#e8f0f8';
+        viewer.style.backgroundColor = '#e8f0f8';
     } else {
         textarea.style.backgroundColor = '#ffffff';
-        viewer.style.backgroundColor = '#f8fafc';
+        viewer.style.backgroundColor = '#ffffff';
     }
+
+    // Indiquer quel fond est choisi (visible + lu par le lecteur d'écran)
+    document.getElementById('btnBgWhite').setAttribute('aria-pressed', color === 'white');
+    document.getElementById('btnBgCream').setAttribute('aria-pressed', color === 'cream');
+    document.getElementById('btnBgPastel').setAttribute('aria-pressed', color === 'pastel');
 }
 
 // Navigation entre les onglets
@@ -200,16 +203,16 @@ function switchTab(tab) {
     const panelWrite = document.getElementById('panelWrite');
     const panelCorrect = document.getElementById('panelCorrect');
 
+    // L'onglet actif est mis en valeur par le CSS (aria-pressed="true")
+    tabWrite.setAttribute('aria-pressed', tab === 'write');
+    tabCorrect.setAttribute('aria-pressed', tab !== 'write');
+
     if (tab === 'write') {
-        tabWrite.className = "flex-1 py-3 text-center font-bold text-sm border-b-2 border-blue-600 text-blue-600 bg-white transition-all";
-        tabCorrect.className = "flex-1 py-3 text-center font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all flex items-center justify-center gap-2";
         panelWrite.classList.remove('hidden');
         panelWrite.classList.add('flex');
         panelCorrect.classList.add('hidden');
         panelCorrect.classList.remove('flex');
     } else {
-        tabCorrect.className = "flex-1 py-3 text-center font-bold text-sm border-b-2 border-blue-600 text-blue-600 bg-white transition-all flex items-center justify-center gap-2";
-        tabWrite.className = "flex-1 py-3 text-center font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all";
         panelCorrect.classList.remove('hidden');
         panelCorrect.classList.add('flex');
         panelWrite.classList.add('hidden');
@@ -296,7 +299,17 @@ RÈGLES IMPORTANTES :
 
             errorSpans.forEach((span, index) => {
                 span.setAttribute('id', `error-${index}`);
+                // Accessible au clavier (Tab puis Entrée) et au lecteur d'écran
+                span.setAttribute('tabindex', '0');
+                span.setAttribute('role', 'button');
+                span.setAttribute('aria-label', `Mot à corriger : ${span.textContent}`);
                 span.addEventListener('click', () => selectErrorWord(span));
+                span.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectErrorWord(span);
+                    }
+                });
             });
         } else {
             // Aucune erreur trouvée
@@ -309,7 +322,7 @@ RÈGLES IMPORTANTES :
     } catch (error) {
         console.error("Erreur d'analyse : ", error);
         document.getElementById('correctionLoader').classList.add('hidden');
-        document.getElementById('interactiveViewer').innerHTML = `<p class="text-red-600 font-bold">Mince, le correcteur magique a rencontré un problème temporaire. S'il te plaît, réessaie.</p><div class="mt-4 text-sm text-slate-700">${textToCorrect}</div>`;
+        document.getElementById('interactiveViewer').innerHTML = `<p class="font-bold" style="color: var(--erreur)">Oups, le correcteur n'a pas pu relire ton texte. Réessaie dans un instant.</p><div class="mt-4">${textToCorrect}</div>`;
         document.getElementById('interactiveViewer').classList.remove('hidden');
     }
 }
@@ -345,11 +358,11 @@ async function fetchClaudeWithBackoff(query, systemPrompt, retries = 5, delay = 
 function selectErrorWord(spanElement) {
     // Retirer la surbrillance de l'ancienne sélection
     if (selectedErrorSpan) {
-        selectedErrorSpan.classList.remove('bg-red-200');
+        selectedErrorSpan.classList.remove('is-selected');
     }
 
     selectedErrorSpan = spanElement;
-    selectedErrorSpan.classList.add('bg-red-200');
+    selectedErrorSpan.classList.add('is-selected');
 
     // Récupérer les données de correction stockées dans les attributs HTML
     const originalWord = spanElement.innerText;
@@ -367,16 +380,18 @@ function selectErrorWord(spanElement) {
     suggestionsListContainer.innerHTML = '';
 
     if (suggestions.length === 0) {
-        suggestionsListContainer.innerHTML = '<p class="text-xs text-slate-500 italic">Aucune suggestion disponible.</p>';
+        suggestionsListContainer.innerHTML = '<p class="texte-doux">Aucune suggestion disponible.</p>';
     } else {
         // Créer un bouton pour chaque suggestion de correction (maximum 7)
         suggestions.slice(0, 7).forEach((sug, index) => {
             const btn = document.createElement('button');
-            btn.className = "w-full text-left bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-900 border border-blue-200 hover:border-blue-300 p-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-between";
-            btn.innerHTML = `
-                <span>${sug}</span>
-                <span class="text-[10px] bg-blue-200 px-2 py-0.5 rounded text-blue-800 font-semibold">Option ${index + 1}</span>
-            `;
+            btn.className = "suggestion";
+            const sugLabel = document.createElement('span');
+            sugLabel.textContent = sug;
+            const optionLabel = document.createElement('span');
+            optionLabel.className = "suggestion-numero";
+            optionLabel.textContent = `Choix ${index + 1}`;
+            btn.append(sugLabel, optionLabel);
             btn.onclick = () => applyCorrection(sug);
             suggestionsListContainer.appendChild(btn);
         });
